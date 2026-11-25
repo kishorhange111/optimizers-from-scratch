@@ -55,17 +55,17 @@ Final val bits/byte by learning rate (lower is better; ✗ = diverged):
 - **adamw**: 0.0003: 2.405, 0.001: 1.746, 0.003: 1.503, 0.01: 3.126
 - **lion**: 3e-05: 3.251, 0.0001: 2.522, 0.0003: 2.245, 0.001: 3.033
 - **adafactor**: 0.0003: 2.550, 0.001: 2.067, 0.003: 2.671, 0.01: 3.524
-- **muon**: 0.005: 1.372, 0.01: 1.302, 0.02: 1.248
+- **muon**: 0.005: 1.372, 0.01: 1.302, 0.02: 1.248, 0.04: 1.271
 
 | optimizer | best lr | best val bpb | lr range within 0.05 of best | state bytes / param | ms / step |
 |---|---|---|---|---|---|
 | adamw | 0.003 | 1.503 | 0.003–0.003 (1/4) | 8.00 | 74.7 |
 | lion | 0.0003 | 2.245 | 0.0003–0.0003 (1/4) | 4.00 | 75.0 |
 | adafactor | 0.001 | 2.067 | 0.001–0.001 (1/4) | 0.03 | 75.5 |
-| muon | 0.02 | 1.248 | 0.02–0.02 (1/3) | 4.17 | 84.5 |
+| muon | 0.02 | 1.248 | 0.02–0.04 (2/4) | 4.17 | 84.5 |
 
-The Muon lr = 0.04 run did not fit in the Colab session and is still pending. Muon's best lr
-is at the top of its grid, so its optimum may be higher still.
+Muon's lr = 0.04 point (1.271) brackets its optimum at 0.02: the grid now covers both sides
+of the best setting for every optimizer.
 
 What it shows:
 - **Muon reaches the lowest loss, at every lr tried.** Its *worst* setting (lr 0.005,
@@ -74,6 +74,9 @@ What it shows:
   Newton–Schulz iterations per matrix). This matches the Muon reports: orthogonalised
   updates give every direction of each weight matrix a useful step, where Adam's per-entry
   scaling lets a few dominant directions take most of it.
+- **Muon is also the least lr-sensitive.** It is the only optimizer with two grid points
+  within 0.05 of its best (0.02 and 0.04), and across an 8× lr range (0.005–0.04) it never
+  does worse than 1.37.
 - **AdamW, Lion and Adafactor are sharply lr-sensitive here.** Each has exactly one grid
   point within 0.05 of its best, and a 3× step either way costs 0.24–1.6 bits/byte.
 - **Lion and Adafactor trail AdamW at this scale and budget** (2.25 and 2.07 against 1.50).
